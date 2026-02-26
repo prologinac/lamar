@@ -1,7 +1,13 @@
 services:
   - type: web
-    name: my-app
+    name: whatsapp-bot
     env: node
     plan: free
     buildCommand: npm install
     startCommand: node index.js
+    healthCheckPath: / # Add this line
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_VERSION
+        value: 20.x
