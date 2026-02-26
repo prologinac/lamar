@@ -1,4 +1,3 @@
-require('./settings')
 const http = require('http');
 // Start this IMMEDIATELY before anything else
 http.createServer((req, res) => {
@@ -6,9 +5,9 @@ http.createServer((req, res) => {
     res.end("Alive");
 }).listen(process.env.PORT || 10000, '0.0.0.0');
 
-require('./settings');
-// ... rest of your code
 
+require('./settings')
+const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 const chalk = require('chalk')
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
