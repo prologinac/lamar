@@ -1,5 +1,12 @@
 require('./settings')
-const { Boom } = require('@hapi/boom')
+const { Boom } = require('@hapi/boom')const http = require('http');
+
+// Create a simple server to keep Render happy
+http.createServer((req, res) => {
+    res.write("Bot is running!");
+    res.end();
+}).listen(process.env.PORT || 10000); 
+
 const fs = require('fs')
 const chalk = require('chalk')
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
