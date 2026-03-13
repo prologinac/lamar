@@ -36,7 +36,7 @@ async function helpCommand(sock, chatId, message, pushname, config) {
 const helpMessage = `
 
     *╭═══════════════════════╗*
-*         𖣘 ᗰᗩᗪᖇIᑎ ᗰᗪ 𖣘*
+*         𖣘 ᗰᗩᗪᖇIᑎ_ᗰᗪ 𖣘*
     *╰═══════════════════════╝*
     *◊◈◊◊◊◊◊       ⎚⎚  ⎚⎚     ◊◊◊◊◊◈◊*
 *┃ ╔═══════════════════════════╗*
