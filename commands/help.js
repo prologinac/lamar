@@ -26,17 +26,16 @@ async function helpCommand(sock, chatId, message, pushname, config) {
   *╰═══════════════════════╝*
  *◊◈◊◊◊◊◊       ⎚⎚  ⎚⎚     ◊◊◊◊◊◈◊*
 
-> ➤  User  ¤ Lamar☪︎*
-> ➤  Rank  ¤ GRANDMASTER*
-> ➤  Mode   ¤ self*
-> ➤  Version ¤ 8.3.0*
-> ➤  Kernal ¤ 6.2.0-MADRIN-PRO-2211*
-> ➤  Latency ¤ 33ms*
-> ➤  Latency ¤ 0h 1m*
-> ➤  Ram   ¤  [████████░░] 56.8MB*
-> ➤ > Encrypt ¤ QUANTUM-AES*
+> ➤  User   Lamar☪︎
+> ➤  Rank   GRANDMASTER
+> ➤  Mode    self
+> ➤  Version  8.3.0
+> ➤  Kernal  6.2.0-MADRIN-PRO-2211
+> ➤  Latency  33ms
+> ➤  Latency  0h 1m
+> ➤  Ram     [████████░░] 56.8MB
+> ➤ > Encrypt  QUANTUM-AES
 
-* hєrє wє gσ αgαín hσmíє ${pushname || 'User'} 😎*
 
 ╔ AVAILABLE COMMANDS ╗
 > 》owner comands
@@ -53,7 +52,7 @@ async function helpCommand(sock, chatId, message, pushname, config) {
 > 》sticker/image commands
 > 》sweet commands
 ╚⭑★⭑★⭑★⭑★⭑★⭑★⭑★⭑╝
-*> ᑭOᗯᗴᖇᗴᗪ ᗷY ᗰᗩᗪᖇIᑎ ᗷOT Tᗴᑕᕼ*`;
+> ᑭOᗯᗴᖇᗴᗪ ᗷY ᗰᗩᗪᖇIᑎ ᗷOT Tᗴᑕᕼ*`;
 
     try {
         // Using your Catbox URL directly
