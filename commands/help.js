@@ -22,7 +22,7 @@ async function helpCommand(sock, chatId, message, pushname, config) {
        
     const helpMessage = `
   *╭═══════════════════════╗*
-           `𖣘 ᗰᗩᗪᖇIᑎ_ᗰᗪ 𖣘`
+           𖣘 ᗰᗩᗪᖇIᑎ_ᗰᗪ 𖣘
   *╰═══════════════════════╝*
  *◊◈◊◊◊◊◊       ⎚⎚  ⎚⎚     ◊◊◊◊◊◈◊*
 
@@ -52,7 +52,7 @@ async function helpCommand(sock, chatId, message, pushname, config) {
 ╚⭑★⭑★⭑★⭑★⭑★⭑★⭑★⭑╝
 
 
-╔ `AVAILABLE COMMANDS` ╗
+╔ AVAILABLE COMMANDS ╗
 > 》owner comands
 > 》admin commands
 > 》general commands
