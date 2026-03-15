@@ -740,13 +740,20 @@ case userMessage.startsWith('.update'):
                     await sock.sendMessage(chatId, { text: 'This command can only be used in groups.', ...channelInfo }, { quoted: message });
                 }
                 break;
-            case userMessage === '.git':
+                        case userMessage === '.git':
             case userMessage === '.github':
             case userMessage === '.sc':
             case userMessage === '.script':
             case userMessage === '.repo':
-                await githubCommand(sock, chatId, message);
+                {
+                    // This creates the args the command needs
+                    const args = userMessage.split(' ').slice(1); 
+                    
+                    // Ensure you pass sock, chatId, message, and args
+                    await githubCommand(sock, chatId, message, args);
+                }
                 break;
+
             case userMessage.startsWith('.antibadword'):
                 if (!isGroup) {
                     await sock.sendMessage(chatId, { text: 'This command can only be used in groups.', ...channelInfo }, { quoted: message });
