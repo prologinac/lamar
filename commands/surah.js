@@ -3,7 +3,7 @@ const axios = require('axios');
 async function surahCommand(sock, chatId, message, args) {
     const input = args[0]?.toLowerCase();
 
-    // 1. Handle the LIST GUIDE
+    // 1. Handle the LIST GUIDE (.surah list or @surah list)
     if (input === 'list') {
         const listGuide = `✨ *SURAH GUIDE* ✨
 
@@ -45,7 +45,7 @@ Fast. Simple. 📃
 23. Al-Mu’minūn
 24. An-Nūr
 25. Al-Furqān
-26. Ash-Shu‘arā’
+26. Ash-Shū‘arā’
 27. An-Naml
 28. Al-Qaṣaṣ
 29. Al-‘Ankabūt
@@ -138,18 +138,18 @@ Fast. Simple. 📃
         return await sock.sendMessage(chatId, { text: listGuide }, { quoted: message });
     }
 
-    // 2. Handle the ACTUAL SURAH NUMBER
+    // 2. Handle the Surah Request
     const surahNumber = input;
     if (!surahNumber || isNaN(surahNumber) || surahNumber < 1 || surahNumber > 114) {
         return await sock.sendMessage(chatId, { 
-            text: "📖 *Please provide a valid Surah number (1-114) or type @surah list.*" 
+            text: "📖 *Please provide a valid Surah number (1-114).*\nExample: `@surah 70`" 
         }, { quoted: message });
     }
 
     try {
         await sock.sendMessage(chatId, { react: { text: '⏳', key: message.key } });
 
-        // Fetch Arabic and English
+        // Fetch Arabic text and English translation
         const [arRes, enRes] = await Promise.all([
             axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.quran-uthmani`),
             axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`)
@@ -169,19 +169,20 @@ Fast. Simple. 📃
             const enText = surahEn.ayahs[index].text;
             let arText = ayah.text;
             
-            // Clean Bismillah for formatting (except Fatiha)
+            // Remove Bismillah from text for clean formatting (except Fatiha)
             if (surahNumber !== "1" && index === 0) {
-                arText = arText.replace(/^(.*?)([\u0628][\u0633][\u0645].*?[\u0627][\u0644][\u0631][\u062D][\u0645][\u0646].*?[\u0627][\u0644][\u0631][\u062D][\u064A][\u0645])/g, "");
+                const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
+                arText = arText.replace(bismillah, "").trim();
             }
 
-            responseText += `${index + 1}. ${arText.trim()}\n`;
+            responseText += `${index + 1}. ${arText}\n`;
             responseText += `➡️ ${enText}\n\n`;
         });
 
-        // Send Text
+        // Send Text Verses
         await sock.sendMessage(chatId, { text: responseText }, { quoted: message });
 
-        // Send Audio Recitation
+        // Send Audio Recitation by Mishary Rashid Alafasy
         const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3`;
         await sock.sendMessage(chatId, {
             audio: { url: audioUrl },
@@ -193,7 +194,7 @@ Fast. Simple. 📃
 
     } catch (error) {
         console.error('Quran API Error:', error);
-        await sock.sendMessage(chatId, { text: '❌ Error: Could not fetch the Surah.' });
+        await sock.sendMessage(chatId, { text: '❌ Error: Could not fetch the Surah data.' });
     }
 }
 
