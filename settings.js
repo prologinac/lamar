@@ -1,18 +1,18 @@
 const settings = {
-  // Bot Basic Info - Linked to Render Environment Variables
-  packname: process.env.PACK_NAME || '❖Ƭʜᴇ〲ᴹᵃᶠⁱᵃ࿐',
-  author: process.env.AUTHOR || 'DELACRUZ',
-  botName: process.env.BOT_NAME || "balckthrone",
-  botOwner: process.env.OWNER_NAME || 'La Madrin',
-  ownerNumber: process.env.OWNER_NUMBER || '255780309253',
+  // Bot Basic Info
+  packname: '❖Ƭʜᴇ〲ᴹᵃᶠⁱᵃ࿐',
+  author: 'DELACRUZ',
+  botName: "balckthrone",
+  botOwner: 'La Madrin',
+  ownerNumber: '255780309253',
   
   // Bot Version & Mode
   version: "8.3.0",
-  commandMode: process.env.MODE || "public",
-  mode: process.env.MODE || "public",
+  commandMode: "self",
+  mode: "self",
   
   // API Keys
-  giphyApiKey: process.env.GIPHY_API || 'qnl7ssQChTdPjsKta2Ax2LMaGXz303tq',
+  giphyApiKey: 'qnl7ssQChTdPjsKta2Ax2LMaGXz303tq',
   
   // Storage Settings
   maxStoreMessages: 20, 
@@ -41,7 +41,7 @@ const settings = {
     userReaction: ["👍", "❤️", "😊", "😂", "🎈", "👏", "💝", "🤝", "🙌", "💖"]
   },
   
-  // Auto Bio - Keep your 10 random bios
+  // Auto Bio - 10 fupi fupi random
   autoBio: [
     '🐢 sɪʟᴀ ᴍᴅ ʙᴏᴛ | ᴘᴏᴡᴇʀᴇᴅ ʙʏ sɪʟᴀ ᴛᴇᴄʜ',
     '🤖 ᴀᴜᴛᴏᴍᴀᴛᴇᴅ ᴀssɪsᴛᴀɴᴛ | sɪʟᴀ ᴍᴅ ᴠ3',
@@ -55,7 +55,7 @@ const settings = {
     '🎮 ᴍᴜʟᴛɪ-ғᴜɴᴄᴛɪᴏɴ | sɪʟᴀ ᴍᴅ ʙᴏᴛ'
   ],
   
-  // Auto Replies - Your custom Swahili & English greetings
+  // Auto Replies
   autoReplies: {
     'hsssi': '𝙷𝚎𝚕𝚕𝚘! 👋',
     'magshsmbo': '𝙿𝚘𝚊 𝚜𝚊𝚗𝚊! 👋 𝙽𝚒𝚔𝚞𝚜𝚊𝚒𝚍𝚒𝚎 𝙺𝚞𝚑𝚞𝚜𝚞?',
@@ -73,7 +73,7 @@ const settings = {
   },
   
   // Command Prefix
-  PREFIX: process.env.PREFIX || "."
+  PREFIX: "."
 };
 
 module.exports = settings;
