@@ -2,8 +2,7 @@ require('./settings')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 const chalk = require('chalk')
-const pino = require("pino")
-const http = require('http') // Built-in Node.js module (No install needed)
+const http = require('http')
 const { handleMessages } = require('./main');
 const {
     default: makeWASocket,
@@ -13,83 +12,54 @@ const {
     makeCacheableSignalKeyStore
 } = require("@whiskeysockets/baileys")
 
-// --- LIGHTWEIGHT KEEP-ALIVE SERVER (No Express) ---
+// Keep-Alive Server
 const port = process.env.PORT || 3000
 http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Bot is Active\n');
-}).listen(port, () => {
-    console.log(chalk.cyan(`Keep-alive server listening on port ${port}`));
-});
+    res.writeHead(200);
+    res.end('Bot is Live');
+}).listen(port);
 
-async function startXeonBotInc() {
-    // 1. Setup Session Directory
-    if (!fs.existsSync('./session')) {
-        fs.mkdirSync('./session');
-    }
+async function startBot() {
+    if (!fs.existsSync('./session')) fs.mkdirSync('./session');
 
-    // 2. Restore Session from Env Var (Base64)
-    if (!fs.existsSync('./session/creds.json') && process.env.SESSION_ID) {
-        console.log(chalk.blue("🔎 SESSION_ID detected. Restoring session..."));
+    // Restore Session
+    if (process.env.SESSION_ID && !fs.existsSync('./session/creds.json')) {
         try {
-            const decodedCreds = Buffer.from(process.env.SESSION_ID, 'base64').toString('utf-8');
-            fs.writeFileSync('./session/creds.json', decodedCreds);
-            console.log(chalk.green("✅ session/creds.json restored."));
-        } catch (err) {
-            console.log(chalk.red("❌ Error decoding SESSION_ID: " + err.message));
-        }
+            const body = process.env.SESSION_ID.includes('~') 
+                ? process.env.SESSION_ID.split('~')[1] 
+                : process.env.SESSION_ID;
+            const decoded = Buffer.from(body, 'base64').toString('utf-8');
+            fs.writeFileSync('./session/creds.json', decoded);
+        } catch (e) { console.log("Session Decode Error"); }
     }
 
-    let { version } = await fetchLatestBaileysVersion()
     const { state, saveCreds } = await useMultiFileAuthState(`./session`)
+    const { version } = await fetchLatestBaileysVersion()
 
-    const XeonBotInc = makeWASocket({
+    const client = makeWASocket({
         version,
-        logger: pino({ level: 'silent' }),
-        printQRInTerminal: true, 
-        // Shows the Windows icon in Linked Devices
-        browser: ["Windows", "Chrome", "20.0.04"], 
+        printQRInTerminal: false,
+        logger: require('pino')({ level: 'silent' }),
+        browser: ["Windows", "Chrome", "20.0.04"], // Matches your photo
         auth: {
             creds: state.creds,
-            keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
-        },
-        markOnlineOnConnect: true,
-        syncFullHistory: false
+            keys: makeCacheableSignalKeyStore(state.keys, require('pino')({ level: "fatal" })),
+        }
     })
 
-    XeonBotInc.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update;
-        
-        if (connection === 'open') {
-            console.log(chalk.bgGreen.black(" WINDOWS SESSION ACTIVE "));
-            console.log(chalk.green(`Connected successfully!`));
-        }
-
+    client.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update
+        if (connection === 'open') console.log(chalk.green("✅ Connected to WhatsApp!"));
         if (connection === 'close') {
-            let reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-            if (reason === DisconnectReason.restartRequired) {
-                startXeonBotInc();
-            } else if (reason === DisconnectReason.loggedOut) {
-                console.log(chalk.red("🚫 Logged out. New SESSION_ID required."));
-                if (fs.existsSync('./session')) fs.rmSync('./session', { recursive: true, force: true });
-            } else {
-                console.log(chalk.yellow(`Connection lost (Reason: ${reason}). Reconnecting...`));
-                setTimeout(() => startXeonBotInc(), 5000);
-            }
+            const shouldRestart = (new Boom(lastDisconnect?.error)?.output?.statusCode) !== DisconnectReason.loggedOut;
+            if (shouldRestart) startBot();
         }
-    });
+    })
 
-    XeonBotInc.ev.on('creds.update', saveCreds);
-
-    XeonBotInc.ev.on('messages.upsert', async chatUpdate => {
-        try {
-            await handleMessages(XeonBotInc, chatUpdate, true);
-        } catch (err) {
-            console.log(chalk.red("Error: "), err);
-        }
-    });
-
-    return XeonBotInc;
+    client.ev.on('creds.update', saveCreds)
+    client.ev.on('messages.upsert', async chatUpdate => {
+        await handleMessages(client, chatUpdate, true);
+    })
 }
 
-startXeonBotInc();
+startBot();
