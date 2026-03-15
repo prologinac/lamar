@@ -405,16 +405,18 @@ case userMessage.startsWith('.surah'):
                 }
                 await unbanCommand(sock, chatId, message);
                 break;
-            // This works for both .help and .menu
-case userMessage.startsWith('.help') || userMessage.startsWith('.menu'):
+            case userMessage.startsWith('.help') || userMessage.startsWith('.menu') || userMessage.startsWith('.list'):
     {
-        const args = userMessage.split(' ').slice(1);
-        const pushname = m.pushName || 'User'; // Make sure m.pushName exists in your message object
+        const args = userMessage.split(' ').slice(1); // This captures "admin", "ai", etc.
+        const pushname = message.pushName || 'User';
         
-        // This calls the same helpCommand function for both
-        await helpCommand(sock, chatId, message, pushname, config, args);
+        // Pass 'args' so helpCommand knows which category to open
+        await helpCommand(sock, chatId, message, pushname, settings, args);
+        
+        commandExecuted = true;
     }
     break;
+
 
                             case userMessage.startsWith('.vn') || userMessage.startsWith('.ptt'):
                 await pttCommand(sock, chatId, message, userMessage.split(' ').slice(1));
