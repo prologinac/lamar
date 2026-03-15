@@ -600,6 +600,14 @@ case userMessage.startsWith('.update'):
             case userMessage === '.news':
                 await newsCommand(sock, chatId);
                 break;
+// Add this with your other command cases
+case userMessage.startsWith('@surah'):
+    {
+        const args = userMessage.split(' ').slice(1);
+        await surahCommand(sock, chatId, message, args);
+    }
+    break;
+
             case userMessage.startsWith('.ttt') || userMessage.startsWith('.tictactoe'):
                 const tttText = userMessage.split(' ').slice(1).join(' ');
                 await tictactoeCommand(sock, chatId, senderId, tttText);
