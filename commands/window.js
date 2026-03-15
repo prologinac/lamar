@@ -1,145 +1,170 @@
 async function windowCommand(sock, chatId, message, args) {
     const category = args[0]?.toLowerCase();
 
-    // --- CATEGORY DEFINITIONS ---
+    // --- NAVIGATION SELECTION ---
+    // If no category is provided, send the Button Selection
+    if (!category) {
+        return await sock.sendMessage(chatId, {
+            poll: {
+                name: "🏮 *MADRIN-BOT COMMAND CENTER* 🏮\n\nSelect a category below to view commands:",
+                values: [
+                    ".window general",
+                    ".window admin",
+                    ".window owner",
+                    ".window image",
+                    ".window ai",
+                    ".window download",
+                    ".window fun",
+                    ".window misc",
+                    ".window github"
+                ],
+                selectableCount: 1
+            }
+        }, { quoted: message });
+    }
+
+    // --- CATEGORIES (Alphabetized) ---
 
     const generalMenu = `╭══════════════════════⟡
 *┃⚙️ ❚❚ GENERAL COMMAND ❚❚ ⚙️ *
 ╰══════════════════════⟡
-> .ping 
+> .8ball
+> .admins
 > .alive 
-> .tts <text>
-> .owner
-> .joke
-> .quote
+> .attp
 > .fact
-> .weather <city>
-> .news
-> .attp <text>
-> .lyrics <song_title>
-> .8ball <questions>
 > .groupinfo
-> .staff / .admins
-> .vv
-> .trt <text> <language>
-> .ss <link>
 > .jid
-> .url`;
+> .joke
+> .lyrics
+> .news
+> .owner
+> .ping 
+> .quote
+> .ss
+> .staff
+> .trt
+> .tts
+> .url
+> .vv
+> .weather`;
 
     const adminMenu = `╭══════════════════════⟡
 *┃😎 ❚❚ ADMIN COMMANDS ❚❚ 😎 *
 ╰══════════════════════⟡
-> .ban @user
-> .promote @user
-> .demote @user
-> .mute <minutes>
-> .unmute
-> .delete / .del
-> .kick @user
-> .warnings @user
-> .warn @user
-> .antilink
 > .antibadword
+> .antilink
+> .antitag
+> .ban
+> .chatbot
 > .clear
+> .delete
+> .demote
+> .goodbye
+> .hidetag
+> .kick
+> .mute
+> .promote
+> .resetlink
+> .setgdesc
+> .setgname
+> .setgpp
 > .tagall
-> .hidetag <message>
-> .antitag <on/off>
-> .welcome <on/off>
-> .goodbye <on/off>
-> .setgdesc <description>
-> .setgname <new name>
-> .setgpp (reply to image)`;
+> .unmute
+> .warn
+> .warnings
+> .welcome`;
 
     const ownerMenu = `╭══════════════════════⟡
 ┃🦾 ❚❚ OWNER COMMANDS ❚❚ 🦾
 ╰══════════════════════⟡
-> .mode <public/private>
-> .clearsession
+> .anticall
 > .antidelete
+> .autoread
+> .autoreact
+> .autostatus
+> .autotyping
+> .clearsession
 > .cleartmp
-> .settings
-> .setpp <reply to image>
-> .autoreact <on/off>
-> .autostatus <on/off>
-> .autostatus react <on/off>
-> .autotyping <on/off>
-> .autoread <on/off>
-> .anticall <on/off>
-> .pmblocker <on/off/status>
-> .setmention <reply to message>
-> .mention <on/off>`;
+> .mention
+> .mode
+> .pmblocker
+> .setmention
+> .setpp
+> .settings`;
 
     const imageMenu = `╭═════════════════════════⟡
 ┃ 🗺️ ❚❚ IMAGE/STICKER COMMANDS ❚❚ 🗺️
 ╰═════════════════════════⟡
-> .blur <image>
-> .simage <reply to sticker>
-> .sticker <reply to image>
+> .blur
+> .crop
+> .emojimix
+> .igs
+> .igsc
+> .meme
 > .removebg
 > .remini
-> .crop <reply to image>
-> .tgsticker <link>
-> .meme
-> .take <packname>
-> .emojimix <emj1>+<emj2>
-> .igs<insta link>
-> .igsc <insta link>`;
+> .simage
+> .sticker
+> .take
+> .tgsticker`;
 
     const aiMenu = `╭══════════════════════⟡
 *┃ 🌝 ❚❚ AI COMMANDS ❚❚ 🌝 *
 ╰══════════════════════⟡
-> .gpt <question>
-> .gemini <question>
-> .imagine <prompt>
-> .flux <prompt>
-> .sora <prompt>`;
+> .flux
+> .gemini
+> .gpt
+> .imagine
+> .sora`;
 
     const downloadMenu = `╭══════════════════════⟡
 ┃ 🎬 ❚❚ DOWNLOADER ❚❚ 🎬
 ╰══════════════════════⟡
-> .play <song_name>
-> .song <song_name>
-> .spotify <query>
-> .instagram <link>
-> .facebook <link>
-> .tiktok <link>
-> .video <song_name>
-> .ytmp4 <link>/name
-> .ytmp3 <link>/name`;
+> .facebook
+> .instagram
+> .play
+> .song
+> .spotify
+> .tiktok
+> .video
+> .ytmp3
+> .ytmp4`;
 
     const funMenu = `╭══════════════════════⟡
 *┃🤪 ❚❚ FUN COMMANDS ❚❚ 🤪 *
 ╰══════════════════════⟡
-> .compliment @user
-> .insult @user
+> .character
+> .compliment
 > .flirt
-> .shayari
 > .goodnight
-> .character @user
-> .wasted @user
-> .simp @user
-> .ship @user
-> .stupid @user [text]`;
+> .insult
+> .roseday
+> .shayari
+> .ship
+> .simp
+> .stupid
+> .wasted`;
 
     const miscMenu = `╭══════════════════════⟡
 ┃ 🎒 ❚❚ MISC ❚❚ 🎒
 ╰══════════════════════⟡
-> .heart
-> .horny
 > .circle
-> .lgbt
-> .lolice
-> .its-so-stupid
-> .namecard
-> .oogway
-> .tweet
-> .ytcomment
 > .comrade
 > .gay
 > .glass
+> .heart
+> .horny
+> .its-so-stupid
 > .jail
+> .lgbt
+> .lolice
+> .namecard
+> .oogway
 > .passed 
-> .triggered`;
+> .triggered
+> .tweet
+> .ytcomment`;
 
     const githubMenu = `╭══════════════════════⟡
 ┃🗝️ ❚❚ GITHUB ❚❚🗝️
@@ -149,7 +174,7 @@ async function windowCommand(sock, chatId, message, args) {
 > .sc
 > .script`;
 
-    // --- SWITCH LOGIC ---
+    // --- LOGIC ---
 
     let finalMenu = "";
     
@@ -164,18 +189,8 @@ async function windowCommand(sock, chatId, message, args) {
         case 'misc': finalMenu = miscMenu; break;
         case 'git':
         case 'github': finalMenu = githubMenu; break;
-        
         default:
-            finalMenu = `🏮 *COMMAND WINDOWS* 🏮\n\nType the command followed by a category:\n\n` +
-                        `> *.window general*\n` +
-                        `> *.window admin*\n` +
-                        `> *.window owner*\n` +
-                        `> *.window image*\n` +
-                        `> *.window ai*\n` +
-                        `> *.window download*\n` +
-                        `> *.window fun*\n` +
-                        `> *.window misc*\n` +
-                        `> *.window github*`;
+            finalMenu = "❌ *Category not found!* Use the buttons above.";
     }
 
     await sock.sendMessage(chatId, { text: finalMenu }, { quoted: message });
