@@ -1,5 +1,5 @@
 const apkCommand = require('./commands/apk');
-const lyricsCommand = require('./commands/lyrics);
+const lyricsCommand = require('./commands/lyrics');
 const surahCommand = require('./commands/surah');
 const updateCommand = require('./commands/update');
 const pttCommand = require('./commands/ptt');
