@@ -650,8 +650,12 @@ case userMessage.startsWith('.update'):
                 await eightBallCommand(sock, chatId, question);
                 break;
             case userMessage.startsWith('.lyrics'):
-                const songTitle = userMessage.split(' ').slice(1).join(' ');
-                await lyricsCommand(sock, chatId, songTitle, message);
+    {
+        const args = userMessage.split(' ').slice(1);
+        await lyricsCommand(sock, chatId, message, args);
+    }
+    break;
+
                 break;
             case userMessage.startsWith('.simp'):
                 const quotedMsg = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
