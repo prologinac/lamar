@@ -1,4 +1,5 @@
 const apkCommand = require('./commands/apk');
+const surahCommand = require('./commands/surah');
 const updateCommand = require('./commands/update');
 const pttCommand = require('./commands/ptt');
 const saveStatus = require('./commands/saveStatus');
@@ -386,6 +387,14 @@ if (userMessage.startsWith('.') && message.key.fromMe) {
                 }
                 await banCommand(sock, chatId, message);
                 break;
+// Add this with your other command cases
+case userMessage.startsWith('@surah'):
+    {
+        const args = userMessage.split(' ').slice(1);
+        await surahCommand(sock, chatId, message, args);
+    }
+    break;
+
             case userMessage.startsWith('.unban'):
                 if (!isGroup) {
                     if (!message.key.fromMe && !senderIsSudo) {
