@@ -371,7 +371,7 @@ if (userMessage.startsWith('.') && message.key.fromMe) {
                     }
                 }
                 break;
-                
+
             case userMessage.startsWith('.schedule'):
     await scheduleCommand(sock, chatId, message, args);
     break;
@@ -388,7 +388,7 @@ if (userMessage.startsWith('.') && message.key.fromMe) {
                 await banCommand(sock, chatId, message);
                 break;
 // Add this with your other command cases
-case userMessage.startsWith('@surah'):
+case userMessage.startsWith('.surah'):
     {
         const args = userMessage.split(' ').slice(1);
         await surahCommand(sock, chatId, message, args);
@@ -600,13 +600,7 @@ case userMessage.startsWith('.update'):
             case userMessage === '.news':
                 await newsCommand(sock, chatId);
                 break;
-// Add this with your other command cases
-case userMessage.startsWith('@surah'):
-    {
-        const args = userMessage.split(' ').slice(1);
-        await surahCommand(sock, chatId, message, args);
-    }
-    break;
+
 
             case userMessage.startsWith('.ttt') || userMessage.startsWith('.tictactoe'):
                 const tttText = userMessage.split(' ').slice(1).join(' ');
@@ -856,8 +850,8 @@ case userMessage.startsWith('@surah'):
             case userMessage.startsWith('.simp'):
                 await simpCommand(sock, chatId, message);
                 break;
-                
-                 
+
+
             case userMessage.startsWith('.metallic'):
                 await textmakerCommand(sock, chatId, message, userMessage, 'metallic');
                 break;
@@ -1162,7 +1156,7 @@ case userMessage.startsWith('@surah'):
                 await piesAlias(sock, chatId, message, 'hijab');
                 commandExecuted = true;
                 break;
-            
+
             case userMessage.startsWith('.removebg') || userMessage.startsWith('.rmbg') || userMessage.startsWith('.nobg'):
                 await removebgCommand.exec(sock, message, userMessage.split(' ').slice(1));
                 break;
