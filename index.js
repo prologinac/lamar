@@ -3,6 +3,7 @@ const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 const chalk = require('chalk')
 const http = require('http')
+const pino = require("pino")
 const { handleMessages } = require('./main');
 const {
     default: makeWASocket,
@@ -16,21 +17,27 @@ const {
 const port = process.env.PORT || 3000
 http.createServer((req, res) => {
     res.writeHead(200);
-    res.end('Bot is Live');
-}).listen(port);
+    res.end('Bot is Alive');
+}).listen(port, '0.0.0.0');
 
 async function startBot() {
+    console.log(chalk.yellow("🚀 Starting Sila MD..."));
+
     if (!fs.existsSync('./session')) fs.mkdirSync('./session');
 
-    // Restore Session
-    if (process.env.SESSION_ID && !fs.existsSync('./session/creds.json')) {
+    // BETTER SESSION RESTORE
+    if (process.env.SESSION_ID) {
         try {
-            const body = process.env.SESSION_ID.includes('~') 
-                ? process.env.SESSION_ID.split('~')[1] 
-                : process.env.SESSION_ID;
-            const decoded = Buffer.from(body, 'base64').toString('utf-8');
+            // Clean the string (removes spaces or prefixes like 'IK~')
+            let sessionId = process.env.SESSION_ID.trim();
+            if (sessionId.includes('~')) sessionId = sessionId.split('~')[1];
+            
+            const decoded = Buffer.from(sessionId, 'base64').toString('utf-8');
             fs.writeFileSync('./session/creds.json', decoded);
-        } catch (e) { console.log("Session Decode Error"); }
+            console.log(chalk.green("📂 Session credentials restored successfully."));
+        } catch (e) { 
+            console.log(chalk.red("❌ Failed to decode SESSION_ID. Check your Render Environment variable!")); 
+        }
     }
 
     const { state, saveCreds } = await useMultiFileAuthState(`./session`)
@@ -38,22 +45,34 @@ async function startBot() {
 
     const client = makeWASocket({
         version,
-        printQRInTerminal: false,
-        logger: require('pino')({ level: 'silent' }),
-        // UPDATED BROWSER ARRAY TO MATCH SCREENSHOT
-        browser: ["Chrome", "Windows", "114.0.5735.198"], 
+        printQRInTerminal: true, // This lets us see a QR in logs if session fails
+        logger: pino({ level: 'info' }), // Increased logging to find errors
+        browser: ["Chrome", "Windows", "114.0.5735.198"],
         auth: {
             creds: state.creds,
-            keys: makeCacheableSignalKeyStore(state.keys, require('pino')({ level: "fatal" })),
+            keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
         }
     })
 
     client.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect } = update
-        if (connection === 'open') console.log(chalk.green("✅ Connected: Google Chrome (Windows)"));
+        const { connection, lastDisconnect, qr } = update
+        
+        if (qr) console.log(chalk.magenta("⚠️ Session invalid! New QR Code generated in logs."));
+        
+        if (connection === 'open') {
+            console.log(chalk.bgGreen.black(" ✅ WHATSAPP CONNECTED SUCCESSFULLY! "));
+        }
+        
         if (connection === 'close') {
-            const shouldRestart = (new Boom(lastDisconnect?.error)?.output?.statusCode) !== DisconnectReason.loggedOut;
-            if (shouldRestart) startBot();
+            const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+            console.log(chalk.red(`🔌 Connection Closed. Reason: ${reason}`));
+            
+            if (reason !== DisconnectReason.loggedOut) {
+                console.log(chalk.yellow("🔄 Attempting to reconnect..."));
+                setTimeout(() => startBot(), 5000);
+            } else {
+                console.log(chalk.bgRed("🚫 LOGGED OUT: Your Session ID is dead. Please generate a new one."));
+            }
         }
     })
 
