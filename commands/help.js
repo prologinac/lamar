@@ -4,8 +4,21 @@ const os = require('os');
 async function helpCommand(sock, chatId, message, pushname, config, args) {
     const prefix = config && config.PREFIX ? config.PREFIX : '.';
     const category = args[0]?.toLowerCase();
-    
-    // --- ALL CATEGORIES ---
+
+    // --- 🖼️ BANNER LIBRARY ---
+    // Replace these URLs with your own Catbox/ImgBB links for each category
+    const banners = {
+        main: 'https://files.catbox.moe/kg0u3p.jpg',
+        general: 'https://files.catbox.moe/kg0u3p.jpg', // Change this
+        admin: 'https://files.catbox.moe/kg0u3p.jpg',   // Change this
+        owner: 'https://files.catbox.moe/kg0u3p.jpg',   // Change this
+        ai: 'https://files.catbox.moe/kg0u3p.jpg',      // Change this
+        download: 'https://files.catbox.moe/kg0u3p.jpg',
+        image: 'https://files.catbox.moe/kg0u3p.jpg',
+        all: 'https://files.catbox.moe/kg0u3p.jpg'      // Banner for .help all
+    };
+
+    // --- 📋 ALL CATEGORIES ---
     const categories = {
         general: `╭══════════════════════⟡\n*┃⚙️ ❚❚ GENERAL COMMAND ❚❚ ⚙️ *\n╰══════════════════════⟡\n> .8ball\n> .admins\n> .alive\n> .attp\n> .fact\n> .groupinfo\n> .jid\n> .joke\n> .lyrics\n> .news\n> .owner\n> .ping\n> .quote\n> .ss\n> .staff\n> .trt\n> .tts\n> .url\n> .vv\n> .weather`,
         admin: `╭══════════════════════⟡\n*┃😎 ❚❚ ADMIN COMMANDS ❚❚ 😎 *\n╰══════════════════════⟡\n> .antibadword\n> .antilink\n> .antitag\n> .ban\n> .chatbot\n> .clear\n> .delete\n> .demote\n> .goodbye\n> .hidetag\n> .kick\n> .mute\n> .promote\n> .resetlink\n> .tagall\n> .unmute\n> .warn\n> .warnings\n> .welcome`,
@@ -21,22 +34,30 @@ async function helpCommand(sock, chatId, message, pushname, config, args) {
         image: `╭═════════════════════════⟡\n┃ 🗺️ ❚❚ IMAGE/STICKER ❚❚ 🗺️\n╰═════════════════════════⟡\n> .blur\n> .crop\n> .emojimix\n> .igs\n> .igsc\n> .meme\n> .removebg\n> .remini\n> .simage\n> .sticker\n> .take\n> .tgsticker`
     };
 
-    // --- LOGIC FOR ".HELP ALL" ---
+    // --- HELP ALL LOGIC ---
     if (category === 'all') {
         let allCommands = `🏮 *MADRIN-MD COMPLETE ARCHIVE* 🏮\n\n`;
         for (const key in categories) {
             allCommands += categories[key] + `\n\n`;
         }
         allCommands += `*ᑭOᗯᗴᖇᗴᗪ ᗷY ᗰᗩᗪᖇIᑎ ᗷOT Tᗴᑕᕼ*`;
-        return await sock.sendMessage(chatId, { text: allCommands }, { quoted: message });
+        
+        return await sock.sendMessage(chatId, { 
+            image: { url: banners.all }, 
+            caption: allCommands 
+        }, { quoted: message });
     }
 
-    // Logic to send a specific category
+    // --- SPECIFIC CATEGORY LOGIC ---
     if (category && categories[category]) {
-        return await sock.sendMessage(chatId, { text: categories[category] }, { quoted: message });
+        const categoryBanner = banners[category] || banners.main;
+        return await sock.sendMessage(chatId, { 
+            image: { url: categoryBanner }, 
+            caption: categories[category] 
+        }, { quoted: message });
     }
 
-    // --- MAIN HELP MENU ---
+    // --- MAIN HELP MENU LOGIC ---
     const uptime = process.uptime();
     const hours = Math.floor(uptime / 3600);
     const minutes = Math.floor((uptime % 3600) / 60);
@@ -74,7 +95,7 @@ async function helpCommand(sock, chatId, message, pushname, config, args) {
 
     try {
         await sock.sendMessage(chatId, {
-            image: { url: 'https://files.catbox.moe/kg0u3p.jpg' },
+            image: { url: banners.main },
             caption: helpMessage,
             contextInfo: {
                 isForwarded: true,
