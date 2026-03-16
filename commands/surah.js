@@ -3,9 +3,9 @@ const axios = require('axios');
 async function surahCommand(sock, chatId, message, args) {
     const input = args[0]?.toLowerCase();
 
-    // 1. Handle the LIST GUIDE (.surah list or @surah list)
+    // 1. THE LIST GUIDE
     if (input === 'list') {
-        const listGuide = `✨ *SURAH GUIDE* ✨
+        const listGuide = `> ✨ *SURAH GUIDE* ✨
 
 Need to listen or read any Surah? 📖
 
@@ -45,7 +45,7 @@ Fast. Simple. 📃
 23. Al-Mu’minūn
 24. An-Nūr
 25. Al-Furqān
-26. Ash-Shū‘arā’
+26. Ash-Shu‘arā’
 27. An-Naml
 28. Al-Qaṣaṣ
 29. Al-‘Ankabūt
@@ -138,51 +138,52 @@ Fast. Simple. 📃
         return await sock.sendMessage(chatId, { text: listGuide }, { quoted: message });
     }
 
-    // 2. Handle the Surah Request
+    // 2. THE SURAH DATA (ARABIC + ENGLISH + SWAHILI)
     const surahNumber = input;
     if (!surahNumber || isNaN(surahNumber) || surahNumber < 1 || surahNumber > 114) {
         return await sock.sendMessage(chatId, { 
-            text: "📖 *Please provide a valid Surah number (1-114).*\nExample: `@surah 70`" 
+            text: "📖 *Please provide a valid Surah number (1-114).*\nMfano: `@surah 70` au `@surah list`" 
         }, { quoted: message });
     }
 
     try {
         await sock.sendMessage(chatId, { react: { text: '⏳', key: message.key } });
 
-        // Fetch Arabic text and English translation
-        const [arRes, enRes] = await Promise.all([
+        // Fetch Arabic, English (Sahih), and Swahili (Barwani)
+        const [arRes, enRes, swRes] = await Promise.all([
             axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.quran-uthmani`),
-            axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`)
+            axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
+            axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/sw.barwani`)
         ]);
 
         const surahAr = arRes.data.data;
         const surahEn = enRes.data.data;
+        const surahSw = swRes.data.data;
 
         let responseText = `*🕋 Quran Surah 🕋*\n\n`;
         responseText += `📖 *Surah ${surahNumber}:* ${surahAr.name}\n`;
         responseText += `*(${surahAr.englishName} - ${surahAr.englishNameTranslation})*\n\n`;
         responseText += `💫 *Type:* ${surahAr.revelationType.toLowerCase()}\n`;
-        responseText += `✅ *Ayahs:* ${surahAr.numberOfAyahs}\n\n`;
-        responseText += `🔮 *Verses*\n\n`;
+        responseText += `📓 *Ayahs:* ${surahAr.numberOfAyahs}\n\n`;
+        responseText += `📜 *Verses*\n\n`;
 
         surahAr.ayahs.forEach((ayah, index) => {
             const enText = surahEn.ayahs[index].text;
+            const swText = surahSw.ayahs[index].text;
             let arText = ayah.text;
-
-            // Remove Bismillah from text for clean formatting (except Fatiha)
+            
             if (surahNumber !== "1" && index === 0) {
                 const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
                 arText = arText.replace(bismillah, "").trim();
             }
 
             responseText += `${index + 1}. ${arText}\n`;
-            responseText += `➡️ ${enText}\n\n`;
+            responseText += `✒️ *EN:* ${enText}\n`;
+            responseText += `✒️ *SW:* ${swText}\n\n`;
         });
 
-        // Send Text Verses
         await sock.sendMessage(chatId, { text: responseText }, { quoted: message });
 
-        // Send Audio Recitation by Mishary Rashid Alafasy
         const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3`;
         await sock.sendMessage(chatId, {
             audio: { url: audioUrl },
@@ -193,8 +194,8 @@ Fast. Simple. 📃
         await sock.sendMessage(chatId, { react: { text: '✅', key: message.key } });
 
     } catch (error) {
-        console.error('Quran API Error:', error);
-        await sock.sendMessage(chatId, { text: '❌ Error: Could not fetch the Surah data.' });
+        console.error('Quran Error:', error);
+        await sock.sendMessage(chatId, { text: '❌ Hitilafu imetokea. Jaribu tena.' });
     }
 }
 
