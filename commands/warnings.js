@@ -1,28 +1,14 @@
 const fs = require('fs');
 const path = require('path');
+const warningsPath = path.join(process.cwd(), 'data', 'warnings.json');
 
-const warningsFilePath = path.join(__dirname, '../data/warnings.json');
+module.exports = async (sock, chatId, message) => {
+    const target = message.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0] || 
+                   message.message?.extendedTextMessage?.contextInfo?.participant;
 
-function loadWarnings() {
-    if (!fs.existsSync(warningsFilePath)) {
-        fs.writeFileSync(warningsFilePath, JSON.stringify({}), 'utf8');
-    }
-    const data = fs.readFileSync(warningsFilePath, 'utf8');
-    return JSON.parse(data);
-}
+    if (!target) return sock.sendMessage(chatId, { text: 'Tag a user to check warnings.' });
 
-async function warningsCommand(sock, chatId, mentionedJidList) {
-    const warnings = loadWarnings();
-
-    if (mentionedJidList.length === 0) {
-        await sock.sendMessage(chatId, { text: 'Please mention a user to check warnings.' });
-        return;
-    }
-
-    const userToCheck = mentionedJidList[0];
-    const warningCount = warnings[userToCheck] || 0;
-
-    await sock.sendMessage(chatId, { text: `User has ${warningCount} warning(s).` });
-}
-
-module.exports = warningsCommand;
+    const warnings = JSON.parse(fs.readFileSync(warningsPath, 'utf8') || '{}');
+    const count = warnings[target] || 0;
+    await sock.sendMessage(chatId, { text: `@${target.split('@')[0]} has ${count} warning(s).`, mentions: [target] });
+};
