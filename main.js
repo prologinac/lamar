@@ -396,13 +396,6 @@ case userMessage.startsWith('.surah'):
         await surahCommand(sock, chatId, message, args);
     }
     break;
-case userMessage.startsWith('.online'):
-    {
-        const args = userMessage.split(' ').slice(1);
-        await online(sock, chatId, message, args);
-        commandExecuted = true;
-    }
-    break;
 
             case userMessage.startsWith('.unban'):
                 if (!isGroup) {
@@ -459,6 +452,14 @@ case userMessage.startsWith('.update'):
                 const mentionedJidListWarn = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
                 await warnCommand(sock, chatId, senderId, mentionedJidListWarn, message);
                 break;
+                case userMessage.startsWith('.online'):
+    {
+        const args = userMessage.split(' ').slice(1);
+        await online(sock, chatId, message, args);
+        commandExecuted = true;
+    }
+    break;
+
             case userMessage.startsWith('.tts'):
                 const text = userMessage.slice(4).trim();
                 await ttsCommand(sock, chatId, text, message);
@@ -991,8 +992,14 @@ case userMessage.startsWith('.window'):
                 await songCommand(sock, chatId, message);
                 break;
             case userMessage.startsWith('.video') || userMessage.startsWith('.ytmp4'):
-                await videoCommand(sock, chatId, message);
-                break;
+    {
+        // This creates the 'args' array that video.js needs
+        const args = userMessage.trim().split(/ +/).slice(1); 
+        await videoCommand(sock, chatId, message, args);
+        commandExecuted = true;
+    }
+    break;
+
             case userMessage.startsWith('.tiktok') || userMessage.startsWith('.tt'):
                 await tiktokCommand(sock, chatId, message);
                 break;
