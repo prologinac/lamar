@@ -9,7 +9,7 @@ async function videoCommand(sock, chatId, message, args) {
         let videoUrl = '';
         let videoTitle = '';
 
-        // 1. YouTube Search
+        // 1. YouTube Search Logic
         if (searchQuery.startsWith('http')) {
             videoUrl = searchQuery;
         } else {
@@ -24,24 +24,24 @@ async function videoCommand(sock, chatId, message, args) {
 
         let downloadUrl = null;
 
-        // --- API 1: Guru API (Very Reliable) ---
+        // --- ATTEMPT 1: ALYA API (New & High Stability) ---
         try {
-            const res = await axios.get(`https://api.botcahx.eu.org/api/dowloader/ytmp4?url=${encodeURIComponent(videoUrl)}&apikey=btch-madrin`);
-            if (res.data?.result?.url) {
-                downloadUrl = res.data.result.url;
+            const res = await axios.get(`https://api.alyachan.dev/api/ytv?url=${encodeURIComponent(videoUrl)}&apikey=madrin`);
+            if (res.data?.data?.url) {
+                downloadUrl = res.data.data.url;
             }
         } catch (e) {
-            // --- API 2: D-API Fallback ---
+            // --- ATTEMPT 2: TINY-URL BYPASS ---
             try {
-                const res = await axios.get(`https://api.dreaded.site/api/ytdl/video?url=${encodeURIComponent(videoUrl)}`);
-                downloadUrl = res.data?.result?.download_url;
+                const res = await axios.get(`https://api.boxi.biz/api/youtube/video?url=${encodeURIComponent(videoUrl)}`);
+                downloadUrl = res.data?.result?.url || res.data?.url;
             } catch (e2) {
-                console.log("Both APIs failed.");
+                console.log("Secondary API failed.");
             }
         }
 
         if (!downloadUrl) {
-            throw new Error("All download servers are busy. Try again in a minute.");
+            throw new Error("Temporary Server Block. YouTube is limiting requests. Please try again in a few minutes.");
         }
 
         // 4. Send the Video
