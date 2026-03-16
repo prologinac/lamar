@@ -11,7 +11,6 @@ async function surahCommand(sock, chatId, message, args) {
 
 Just type:
 > 👉 @surah + number
-
 Example:
 > @surah 1
 > @surah 18
