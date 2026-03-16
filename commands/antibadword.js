@@ -1,23 +1,19 @@
 const { handleAntiBadwordCommand } = require('../lib/antibadword');
 const isAdminHelper = require('../lib/isAdmin');
 
-async function antibadwordCommand(sock, chatId, message, senderId, isSenderAdmin) {
-    try {
-        if (!isSenderAdmin) {
-            await sock.sendMessage(chatId, { text: '```For Group Admins Only!```' }, { quoted: message });
-            return;
-        }
+module.exports = async (sock, chatId, message, args, context) => {
+    const { isSudo } = context;
+    const sender = message.key.participant || message.key.remoteJid;
+    
+    // Check Admin
+    const check = await isAdminHelper(sock, chatId, sender);
+    if (!check.isSenderAdmin && !isSudo) {
+        return await sock.sendMessage(chatId, { text: '
+http://googleusercontent.com/immersive_entry_chip/0
 
-        // Extract match from message
-        const text = message.message?.conversation || 
-                    message.message?.extendedTextMessage?.text || '';
-        const match = text.split(' ').slice(1).join(' ');
+---
 
-        await handleAntiBadwordCommand(sock, chatId, message, match);
-    } catch (error) {
-        console.error('Error in antibadword command:', error);
-        await sock.sendMessage(chatId, { text: '*Error processing antibadword command*' }, { quoted: message });
-    }
-}
-
-module.exports = antibadwordCommand; 
+### 📦 Next Steps:
+1.  **Save these** as `.js` files in your `commands/` folder.
+2.  **Delete** the old `aiCommand`, `aliveCommand`, etc., from your `main.js` (because the new `main.js` will now find these files automatically).
+3.  **Test them!** **Would you like me to convert the next 5 commands for you?** Just paste them whenever you're ready.
