@@ -7,7 +7,7 @@ async function surahCommand(sock, chatId, message, args) {
     if (input === 'list') {
         const listGuide = `> ✨ *SURAH GUIDE* ✨
 
-Need to listen or read any Surah? 📖
+`Need to listen or read any Surah? 📖`
 
 Just type:
 > 👉 @surah + number
@@ -142,7 +142,7 @@ Fast. Simple. 📃
     const surahNumber = input;
     if (!surahNumber || isNaN(surahNumber) || surahNumber < 1 || surahNumber > 114) {
         return await sock.sendMessage(chatId, { 
-            text: "📖 *Please provide a valid Surah number (1-114).*\nMfano: `@surah 70` au `@surah list`" 
+            text: "📖 *Please provide a valid Surah number (1-114).*\nExample: `.surah 70` au `.surah list`" 
         }, { quoted: message });
     }
 
@@ -160,7 +160,7 @@ Fast. Simple. 📃
         const surahEn = enRes.data.data;
         const surahSw = swRes.data.data;
 
-        let responseText = `*> 🕋 Quran Surah 🕋*\n\n`;
+        let responseText = `> 🕋 Quran Surah 🕋\n\n`;
         responseText += `📖 *Surah ${surahNumber}:* ${surahAr.name}\n`;
         responseText += `*(${surahAr.englishName} - ${surahAr.englishNameTranslation})*\n\n`;
         responseText += `> 💫 *Type:* ${surahAr.revelationType.toLowerCase()}\n`;
