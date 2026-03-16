@@ -1,4 +1,5 @@
 const apkCommand = require('./commands/apk');
+const online = require('./commands/online');
 const windowCommand = require('./commands/window');
 const lyricsCommand = require('./commands/lyrics');
 const surahCommand = require('./commands/surah');
@@ -393,6 +394,13 @@ case userMessage.startsWith('.surah'):
     {
         const args = userMessage.split(' ').slice(1);
         await surahCommand(sock, chatId, message, args);
+    }
+    break;
+case userMessage.startsWith('.online'):
+    {
+        const args = userMessage.split(' ').slice(1);
+        await online(sock, chatId, message, args);
+        commandExecuted = true;
     }
     break;
 
