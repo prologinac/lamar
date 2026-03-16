@@ -5,12 +5,12 @@ async function surahCommand(sock, chatId, message, args) {
 
     // 1. THE LIST GUIDE
     if (input === 'list') {
-        const listGuide = `✨ *SURAH GUIDE* ✨
+        const listGuide = `> ✨ *SURAH GUIDE* ✨
 
 Need to listen or read any Surah? 📖
 
 Just type:
-👉 @surah + number
+> 👉 @surah + number
 
 Example:
 > @surah 1
