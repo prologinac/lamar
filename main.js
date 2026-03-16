@@ -1,4 +1,5 @@
 const apkCommand = require('./commands/apk');
+const draw = require('./commands/draw');
 const online = require('./commands/online');
 const windowCommand = require('./commands/window');
 const lyricsCommand = require('./commands/lyrics');
@@ -653,6 +654,18 @@ case userMessage.startsWith('.window'):
                     sock.sendMessage(chatId, { text: 'Please guess a letter using .guess <letter>', ...channelInfo }, { quoted: message });
                 }
                 break;
+case userMessage.startsWith('.draw') || userMessage.startsWith('.paint'):
+    {
+        // This captures the 'args' needed by draw.js
+        const args = userMessage.trim().split(/ +/).slice(1);
+
+        // Pass sock, chatId, message, AND args
+        await draw(sock, chatId, message, args);
+
+        commandExecuted = true;
+    }
+    break;
+
             case userMessage.startsWith('.trivia'):
                 startTrivia(sock, chatId);
                 break;
