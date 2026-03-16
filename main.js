@@ -1,5 +1,6 @@
 const apkCommand = require('./commands/apk');
 const draw = require('./commands/draw');
+const botdp = require('./commands/botdp');
 const online = require('./commands/online');
 const windowCommand = require('./commands/window');
 const lyricsCommand = require('./commands/lyrics');
@@ -708,6 +709,9 @@ case userMessage.startsWith('.draw') || userMessage.startsWith('.paint'):
                 break;
             case userMessage === '.dare':
                 await dareCommand(sock, chatId, message);
+case userMessage.startsWith('.botdp'):
+    await botdp(sock, chatId, message);
+    break;
                 break;
             case userMessage === '.truth':
                 await truthCommand(sock, chatId, message);
