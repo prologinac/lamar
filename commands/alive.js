@@ -1,39 +1,15 @@
 const settings = require("../settings");
 
-async function aliveCommand(sock, chatId, message) {
+module.exports = async (sock, chatId, message) => {
     try {
-        // Step 1: Send reaction first
-        await sock.sendMessage(chatId, {
-            react: {
-                text: '😎', // Emoji ya kucheka
-                key: message.key
-            }
-        });
+        await sock.sendMessage(chatId, { react: { text: '😎', key: message.key } });
 
         const aliveMessage = `
 *╭━━━〔 🅷︎🅴︎🆈︎ 🅸︎🆃︎🆂︎ 🅼︎🅰︎🅳︎🆁︎🅸︎🅽︎ 🤪〕━━━┈⊷*
-*┃彡╭──────────────────*
-*┃彡│ 𝗡𝗔𝗠𝗘(𝗼𝘄𝗻𝗲𝗿) :❯ 𝗥𝗮𝗺𝗮𝗱𝗵𝗮𝗻 𝗛𝗮𝘀𝗵𝗶𝗺*
-*┃彡│ 𝗚𝗘𝗡𝗗𝗘𝗥:❯ 𝗥𝗮𝘁𝗵𝗲𝗿 𝗻𝗼𝘁 𝘁𝗼 𝘀𝗮𝘆*
-*┃彡│ 𝗩𝗘𝗥𝗦𝗜𝗢𝗡 :❯ ${settings.version || '1.𝟶.𝟶'}*
-*┃彡彡╰──────────────────*
+*┃ 𝗡𝗔𝗠𝗘:❯ 𝗥𝗮𝗺𝗮𝗱𝗵𝗮𝗻 𝗛𝗮𝘀𝗵𝗶𝗺*
+*┃ 𝗩𝗘𝗥𝗦𝗜𝗢𝗡:❯ ${settings.version || '1.0.0'}*
 *╰━━━━━━━━━━━━━━━┈⊷*
-
-*𝙱𝙾𝚃 𝙸𝚂 𝙰𝙲𝚃𝙸𝚅𝙴 𝙰𝙽𝙳 𝚁𝚄𝙽𝙽𝙸𝙽𝙶!(𝘗𝘏𝘠𝘚𝘐𝘊𝘚 𝘈𝘗𝘗𝘓𝘐𝘌𝘋)*
-
-*╭━━〔 FEATURES INSIDE THE FUCKING BOT〕━━┈⊷*
-*┃☬𝙶𝚛𝚘𝚞𝚙 𝚖𝚊𝚗𝚊𝚐𝚎𝚖𝚎𝚗𝚝 *
-*┃☬𝙿𝚛𝚘𝚝𝚎𝚌𝚝𝚒𝚘𝚗 𝚎𝚗𝚜𝚞𝚛𝚎𝚍*
-*┃☬𝙵𝚞𝚗 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜*
-*┃☬𝙰𝙸 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜*
-*┃☬𝙳𝚘𝚠𝚗𝚕𝚘𝚊𝚍𝚜*
-*┃☬A developer 𝙍𝙖𝙢𝙖𝙙𝙝𝙖𝙣 𝙃𝙖𝙨𝙝𝙞𝙢*
-*┃☬𝚅𝚒𝚎𝚠 𝚊𝚝 𝚘𝚗𝚌𝚎 (𝚋𝚢  𝚙𝚊𝚜𝚜𝚎𝚍)*
-*╰━━━━━━━━━━━━━━━┈⊷*
-
-*𝑨𝒏𝒅 𝒂𝒍𝒍 𝒎𝒆𝒎𝒃𝒆𝒓𝒔 𝒐𝒓 𝒕𝒉𝒆 𝒈𝒂𝒏𝒈𝒔 𝒐𝒇 𝑻𝒉𝒆 𝒃𝒆𝒈𝒈𝒊𝒏𝒆𝒓 𝒉𝒂𝒄𝒌𝒆𝒓 𝗠𝗮𝗱𝗿𝗶𝗻 *
-
-* 𝗧𝗛𝗘 𝗕𝗢𝗧 𝗜𝗦 𝗪𝗢𝗥𝗞𝗜𝗡𝗚 𝗘𝗙𝗙𝗘𝗖𝗧𝗜𝗩𝗘𝗟𝗬 𝗛𝗢𝗠𝗜𝗘*`;
+*𝙱𝙾𝚃 𝙸𝚂 𝙰𝙲𝚃𝙸𝚅𝙴 𝙰𝙽𝙳 𝚁𝚄𝙽𝙽𝙸𝙽𝙶!*`;
 
         await sock.sendMessage(chatId, {
             text: aliveMessage,
@@ -42,17 +18,11 @@ async function aliveCommand(sock, chatId, message) {
                 isForwarded: false,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363402325089913@newsletter',
-                    newsletterName: '🅼︎🅰︎🅳︎🆁︎🅸︎🅽︎ 🄷🄾🄿🄺🄸🄽🅂',
-                    serverMessageId: -1
+                    newsletterName: '🅼︎🅰︎🅳︎🆁︎🅸︎🅽︎ 🄷🄾🄿🄺🄸🄽🅂'
                 }
             }
         }, { quoted: message });
     } catch (error) {
-        console.error('Error in alive command:', error);
-        await sock.sendMessage(chatId, { 
-            text: '*𝗕𝗼𝘁 𝗶𝘀 𝗮𝗹𝗶𝘃𝗲 𝗮𝗻𝗱 𝗿𝘂𝗻𝗻𝗶𝗻𝗴 𝗲𝗳𝗳𝗲𝗰𝘁𝗶𝘃𝗲𝗹𝘆*' 
-        }, { quoted: message });
+        await sock.sendMessage(chatId, { text: '*𝗕𝗼𝘁 𝗶𝘀 𝗮𝗹𝗶𝘃𝗲*' }, { quoted: message });
     }
-}
-
-module.exports = aliveCommand;
+};
