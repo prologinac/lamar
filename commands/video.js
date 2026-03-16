@@ -6,13 +6,10 @@ async function videoCommand(sock, chatId, message, args) {
         const searchQuery = args.join(' ');
         if (!searchQuery) return await sock.sendMessage(chatId, { text: '> ❌ Provide a name or link!' }, { quoted: message });
 
-        let videoUrl = '';
+        let videoUrl = searchQuery.startsWith('http') ? searchQuery : null;
         let videoTitle = '';
 
-        // 1. YouTube Search Logic
-        if (searchQuery.startsWith('http')) {
-            videoUrl = searchQuery;
-        } else {
+        if (!videoUrl) {
             const search = await yts(searchQuery);
             const video = search.videos[0];
             if (!video) return await sock.sendMessage(chatId, { text: '> ❌ No results found.' }, { quoted: message });
@@ -22,33 +19,15 @@ async function videoCommand(sock, chatId, message, args) {
 
         await sock.sendMessage(chatId, { text: `> 📥 *Madrin-Md: Downloading...*\n> ${videoTitle || videoUrl}` }, { quoted: message });
 
-        let downloadUrl = null;
+        // --- LOKESH-DEV API (High Success Rate) ---
+        const res = await axios.get(`https://api.lokeshder.com/api/downloader/ytmp4?url=${encodeURIComponent(videoUrl)}`);
+        const downloadUrl = res.data?.data?.url_video || res.data?.result?.url;
 
-        // --- ATTEMPT 1: ALYA API (New & High Stability) ---
-        try {
-            const res = await axios.get(`https://api.alyachan.dev/api/ytv?url=${encodeURIComponent(videoUrl)}&apikey=madrin`);
-            if (res.data?.data?.url) {
-                downloadUrl = res.data.data.url;
-            }
-        } catch (e) {
-            // --- ATTEMPT 2: TINY-URL BYPASS ---
-            try {
-                const res = await axios.get(`https://api.boxi.biz/api/youtube/video?url=${encodeURIComponent(videoUrl)}`);
-                downloadUrl = res.data?.result?.url || res.data?.url;
-            } catch (e2) {
-                console.log("Secondary API failed.");
-            }
-        }
+        if (!downloadUrl) throw new Error("YouTube blocked this request. Try a different video.");
 
-        if (!downloadUrl) {
-            throw new Error("Temporary Server Block. YouTube is limiting requests. Please try again in a few minutes.");
-        }
-
-        // 4. Send the Video
         await sock.sendMessage(chatId, {
             video: { url: downloadUrl },
             mimetype: 'video/mp4',
-            fileName: `${videoTitle || 'video'}.mp4`,
             caption: `*${videoTitle || 'Madrin Video'}*\n\n> *_Downloaded by Madrin_*`
         }, { quoted: message });
 
