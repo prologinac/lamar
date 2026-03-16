@@ -7,7 +7,7 @@ async function surahCommand(sock, chatId, message, args) {
     if (input === 'list') {
         const listGuide = `> ✨ *SURAH GUIDE* ✨
 
-*\n`Need to listen or read any Surah? 📖`
+*\n`Need to listen or read any Surah? 📖`*
 
 Just type:
 > 👉 @surah + number
